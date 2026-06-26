@@ -88,6 +88,29 @@ components:
         statusCode:
           type: integer
 
+    PaginatedOrdersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+        meta:
+          type: object
+          properties:
+            totalItems:
+              type: integer
+              example: 15
+            page:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 20
+            totalPages:
+              type: integer
+              example: 1
+
 paths:
   /api/orders:
     post:
@@ -116,7 +139,7 @@ paths:
 
     get:
       summary: List all orders
-      description: Retrieves all orders, optionally filtered by status. Results are sorted by creation date (newest first).
+      description: Retrieves all orders, optionally filtered by status, with pagination support. Results are sorted by creation date (newest first).
       tags: [Orders]
       parameters:
         - in: query
@@ -125,17 +148,29 @@ paths:
             $ref: "#/components/schemas/OrderStatus"
           required: false
           description: Filter orders by status
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+          required: false
+          description: Max number of orders to return (max 100)
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          required: false
+          description: Page index to retrieve
       responses:
         200:
-          description: A list of orders
+          description: A paginated list of orders
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Order"
+                $ref: "#/components/schemas/PaginatedOrdersResponse"
         400:
-          description: Invalid status filter
+          description: Invalid query parameters
           content:
             application/json:
               schema:
