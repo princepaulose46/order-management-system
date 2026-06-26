@@ -133,9 +133,8 @@ describe("Order API - Integration Tests", () => {
       expect(response.body.data.length).toBeGreaterThanOrEqual(1);
       expect(response.body.meta).toEqual({
         totalItems: expect.any(Number),
-        page: 1,
         limit: 20,
-        totalPages: expect.any(Number),
+        offset: 0,
       });
     });
 
@@ -152,12 +151,12 @@ describe("Order API - Integration Tests", () => {
 
     it("should validate and apply pagination query parameters", async () => {
       const response = await request(app)
-        .get("/api/orders?limit=1&page=1")
+        .get("/api/orders?limit=1&offset=0")
         .expect(200);
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.meta.limit).toBe(1);
-      expect(response.body.meta.page).toBe(1);
+      expect(response.body.meta.offset).toBe(0);
     });
 
     it("should return 400 for invalid pagination parameters", async () => {
@@ -167,6 +166,10 @@ describe("Order API - Integration Tests", () => {
 
       await request(app)
         .get("/api/orders?limit=-1")
+        .expect(400);
+
+      await request(app)
+        .get("/api/orders?offset=-1")
         .expect(400);
     });
   });

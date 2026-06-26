@@ -99,10 +99,10 @@ class OrderService {
    *
    * @param status - Optional OrderStatus to filter by.
    * @param limit - Max number of items to retrieve (default: 20).
-   * @param page - Current page number (default: 1).
+   * @param offset - Number of items to skip (default: 0).
    * @returns An object containing the array of orders (data) and pagination metadata (meta).
    */
-  async listOrders(status?: OrderStatus, limit: number = 20, page: number = 1) {
+  async listOrders(status?: OrderStatus, limit: number = 20, offset: number = 0) {
     const where: Prisma.OrderWhereInput = {};
 
     if (status) {
@@ -122,20 +122,17 @@ class OrderService {
         include: { items: true },
         orderBy: { createdAt: "desc" },
         take: limit,
-        skip: (page - 1) * limit,
+        skip: offset,
       }),
       prisma.order.count({ where }),
     ]);
-
-    const totalPages = Math.ceil(totalItems / limit);
 
     return {
       data: orders,
       meta: {
         totalItems,
-        page,
         limit,
-        totalPages,
+        offset,
       },
     };
   }

@@ -108,11 +108,11 @@ The server starts at `http://localhost:3000` and Swagger docs are available at `
 
 ## API Endpoints
 
-| Method | Endpoint                 | Description                                                                 |
-| ------ | ------------------------ | --------------------------------------------------------------------------- |
-| `POST` | `/api/orders`            | Create a new order                                                          |
-| `GET`  | `/api/orders`            | List all orders (filtered by `?status=`, paginated by `?limit=` & `?page=`) |
-| `GET`  | `/api/orders/:id`        | Get order by ID                                                             |
+| Method | Endpoint                 | Description                                                                   |
+| ------ | ------------------------ | ----------------------------------------------------------------------------- |
+| `POST` | `/api/orders`            | Create a new order                                                            |
+| `GET`  | `/api/orders`            | List all orders (filtered by `?status=`, paginated by `?limit=` & `?offset=`) |
+| `GET`  | `/api/orders/:id`        | Get order by ID                                                               |
 | `PUT`  | `/api/orders/:id/cancel` | Cancel a pending order                                                      |
 | `GET`  | `/health`                | Health check                                                                |
 | `GET`  | `/api-docs`              | Swagger UI                                                                  |
@@ -134,7 +134,7 @@ curl -X POST http://localhost:3000/api/orders \
 ### Example: List Orders (Paginated)
 
 ```bash
-curl "http://localhost:3000/api/orders?status=PENDING&limit=1&page=1"
+curl "http://localhost:3000/api/orders?status=PENDING&limit=1&offset=0"
 ```
 
 Response:
@@ -161,9 +161,8 @@ Response:
 	],
 	"meta": {
 		"totalItems": 15,
-		"page": 1,
 		"limit": 1,
-		"totalPages": 15
+		"offset": 0
 	}
 }
 ```

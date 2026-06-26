@@ -34,7 +34,7 @@ export const ListOrdersSchema = z.object({
   query: z.object({
     status: z.nativeEnum(OrderStatus, { message: "Invalid status" }).optional(),
     limit: z.coerce.number().int().positive().max(100).default(20),
-    page: z.coerce.number().int().positive().default(1),
+    offset: z.coerce.number().int().nonnegative().default(0),
   }),
 });
 

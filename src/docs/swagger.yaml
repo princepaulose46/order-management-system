@@ -101,15 +101,12 @@ components:
             totalItems:
               type: integer
               example: 15
-            page:
-              type: integer
-              example: 1
             limit:
               type: integer
               example: 20
-            totalPages:
+            offset:
               type: integer
-              example: 1
+              example: 0
 
 paths:
   /api/orders:
@@ -156,12 +153,12 @@ paths:
           required: false
           description: Max number of orders to return (max 100)
         - in: query
-          name: page
+          name: offset
           schema:
             type: integer
-            default: 1
+            default: 0
           required: false
-          description: Page index to retrieve
+          description: Number of orders to skip (offset)
       responses:
         200:
           description: A paginated list of orders
