@@ -1,8 +1,8 @@
-# 📦 Order Management System
+# Order Management System
 
 A production-ready **E-commerce Order Processing API** built with Node.js, Express, TypeScript, and Prisma ORM.
 
-## ✨ Features
+## Features
 
 - **Order CRUD** — Create, retrieve, list (with status filtering), and cancel orders
 - **Automatic Order Processing** — Background cron job promotes `PENDING` → `PROCESSING` every 5 minutes
@@ -11,20 +11,20 @@ A production-ready **E-commerce Order Processing API** built with Node.js, Expre
 - **Production Hardened** — Connection pooling, graceful shutdown, Decimal-safe pricing, native UUIDs
 - **Integration Tests** — Full test suite with Jest + Supertest
 
-## 🛠 Tech Stack
+## Tech Stack
 
-| Layer          | Technology                          |
-| -------------- | ----------------------------------- |
-| Runtime        | Node.js + TypeScript                |
-| Framework      | Express 4                           |
-| ORM            | Prisma 6 (PostgreSQL)               |
-| Background Jobs| node-cron                           |
-| API Docs       | swagger-jsdoc + swagger-ui-express  |
-| Security & Limit| helmet + cors + express-rate-limit   |
-| Distributed Store| ioredis + rate-limit-redis (optional)|
-| Testing        | Jest + Supertest                    |
+| Layer             | Technology                            |
+| ----------------- | ------------------------------------- |
+| Runtime           | Node.js + TypeScript                  |
+| Framework         | Express 4                             |
+| ORM               | Prisma 6 (PostgreSQL)                 |
+| Background Jobs   | node-cron                             |
+| API Docs          | swagger-jsdoc + swagger-ui-express    |
+| Security & Limit  | helmet + cors + express-rate-limit    |
+| Distributed Store | ioredis + rate-limit-redis (optional) |
+| Testing           | Jest + Supertest                      |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -39,7 +39,7 @@ src/
 │   └── rate-limit.middleware.ts  # Distributed rate limiter (Redis/Memory)
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -52,20 +52,20 @@ src/
 
 If you are using Redis for rate-limiting, you can verify it is active with these commands:
 
-* **Via CLI**:
+- **Via CLI**:
   ```bash
   redis-cli ping
   # Should return: PONG
   ```
-* **macOS (Homebrew)**:
+- **macOS (Homebrew)**:
   ```bash
   brew services list | grep redis
   ```
-* **Docker**:
+- **Docker**:
   ```bash
   docker ps | grep redis
   ```
-* **Linux (systemd)**:
+- **Linux (systemd)**:
   ```bash
   systemctl status redis-server
   ```
@@ -93,29 +93,29 @@ npm run dev
 
 The server starts at `http://localhost:3000` and Swagger docs are available at `http://localhost:3000/api-docs`.
 
-## 📜 Available Scripts
+## Available Scripts
 
-| Script                 | Description                                          |
-| ---------------------- | ---------------------------------------------------- |
-| `npm run dev`          | Start dev server with nodemon (auto-reloads on file changes) |
-| `npm run build`        | Compile TypeScript to `dist/`                        |
-| `npm start`            | Run compiled production build                        |
-| `npm test`             | Run integration tests (uses `.env.test`)             |
-| `npm run prisma:migrate` | Create & apply a new migration (development)       |
-| `npm run prisma:deploy`  | Apply pending migrations (production — non-interactive) |
-| `npm run prisma:reset`   | Reset database & re-apply all migrations           |
-| `npm run prisma:studio`  | Open Prisma Studio (visual DB browser)             |
+| Script                   | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| `npm run dev`            | Start dev server with nodemon (auto-reloads on file changes) |
+| `npm run build`          | Compile TypeScript to `dist/`                                |
+| `npm start`              | Run compiled production build                                |
+| `npm test`               | Run integration tests (uses `.env.test`)                     |
+| `npm run prisma:migrate` | Create & apply a new migration (development)                 |
+| `npm run prisma:deploy`  | Apply pending migrations (production — non-interactive)      |
+| `npm run prisma:reset`   | Reset database & re-apply all migrations                     |
+| `npm run prisma:studio`  | Open Prisma Studio (visual DB browser)                       |
 
-## 📡 API Endpoints
+## API Endpoints
 
-| Method | Endpoint                  | Description                                                               |
-| ------ | ------------------------- | ------------------------------------------------------------------------- |
-| `POST` | `/api/orders`             | Create a new order                                                        |
-| `GET`  | `/api/orders`             | List all orders (filtered by `?status=`, paginated by `?limit=` & `?page=`) |
-| `GET`  | `/api/orders/:id`         | Get order by ID                                                           |
-| `PUT`  | `/api/orders/:id/cancel`  | Cancel a pending order                                                    |
-| `GET`  | `/health`                 | Health check                                                              |
-| `GET`  | `/api-docs`               | Swagger UI                                                                |
+| Method | Endpoint                 | Description                                                                 |
+| ------ | ------------------------ | --------------------------------------------------------------------------- |
+| `POST` | `/api/orders`            | Create a new order                                                          |
+| `GET`  | `/api/orders`            | List all orders (filtered by `?status=`, paginated by `?limit=` & `?page=`) |
+| `GET`  | `/api/orders/:id`        | Get order by ID                                                             |
+| `PUT`  | `/api/orders/:id/cancel` | Cancel a pending order                                                      |
+| `GET`  | `/health`                | Health check                                                                |
+| `GET`  | `/api-docs`              | Swagger UI                                                                  |
 
 ### Example: Create an Order
 
@@ -138,36 +138,37 @@ curl "http://localhost:3000/api/orders?status=PENDING&limit=1&page=1"
 ```
 
 Response:
+
 ```json
 {
-  "data": [
-    {
-      "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-      "customerName": "John Doe",
-      "status": "PENDING",
-      "createdAt": "2026-06-26T22:20:00.000Z",
-      "updatedAt": "2026-06-26T22:20:00.000Z",
-      "items": [
-        {
-          "id": "f8e7d6c5-b4a3-2f1e-0d9c-8b7a6f5e4d3c",
-          "orderId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-          "productName": "Wireless Headphones",
-          "quantity": 2,
-          "price": "49.99"
-        }
-      ]
-    }
-  ],
-  "meta": {
-    "totalItems": 15,
-    "page": 1,
-    "limit": 1,
-    "totalPages": 15
-  }
+	"data": [
+		{
+			"id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+			"customerName": "John Doe",
+			"status": "PENDING",
+			"createdAt": "2026-06-26T22:20:00.000Z",
+			"updatedAt": "2026-06-26T22:20:00.000Z",
+			"items": [
+				{
+					"id": "f8e7d6c5-b4a3-2f1e-0d9c-8b7a6f5e4d3c",
+					"orderId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+					"productName": "Wireless Headphones",
+					"quantity": 2,
+					"price": "49.99"
+				}
+			]
+		}
+	],
+	"meta": {
+		"totalItems": 15,
+		"page": 1,
+		"limit": 1,
+		"totalPages": 15
+	}
 }
 ```
 
-## 🔄 Order Status Flow
+## Order Status Flow
 
 ```
 PENDING ──(cron job)──▶ PROCESSING ──▶ SHIPPED ──▶ DELIVERED
@@ -179,7 +180,7 @@ PENDING ──(cron job)──▶ PROCESSING ──▶ SHIPPED ──▶ DELIVER
 - A background cron job promotes `PENDING` → `PROCESSING` every 5 minutes
 - Only `PENDING` orders can be cancelled
 
-## 🧪 Testing
+## Testing
 
 Tests run against a separate test database configured in `.env.test`.
 
@@ -194,7 +195,7 @@ dotenv -e .env.test -- npx prisma migrate deploy
 npm test
 ```
 
-## ⚙️ Production Deployment
+## Production Deployment
 
 ```bash
 # 1. Install dependencies & generate Prisma client
@@ -212,17 +213,12 @@ NODE_ENV=production npm start
 
 ### Production Configuration
 
-| Setting             | Where                  | Recommendation                             |
-| ------------------- | ---------------------- | ------------------------------------------ |
-| Connection pool     | `DATABASE_URL` params  | `connection_limit` = max_db_conn / instances |
-| Pool timeout        | `DATABASE_URL` params  | `pool_timeout=10` (seconds)                |
-| Direct DB access    | `DIRECT_URL`           | Bypass pooler (PgBouncer) for migrations   |
-| Graceful shutdown   | `server.ts`            | Built-in SIGTERM/SIGINT handlers (10s timeout) and Redis connection cleanup |
-| Logging             | `prisma.ts`            | Verbose in dev, warn+error only in production |
-| Distributed Rate Limiting | `.env` variables | Configure `REDIS_URL` or `REDIS_HOST` to enable shared rate limiting limits |
-| Trust Proxy         | `TRUST_PROXY` var      | Set to `1`, `true`, or proxy IP to identify real client IPs behind load balancers |
-
-
-## 📄 License
-
-ISC
+| Setting                   | Where                 | Recommendation                                                                    |
+| ------------------------- | --------------------- | --------------------------------------------------------------------------------- |
+| Connection pool           | `DATABASE_URL` params | `connection_limit` = max_db_conn / instances                                      |
+| Pool timeout              | `DATABASE_URL` params | `pool_timeout=10` (seconds)                                                       |
+| Direct DB access          | `DIRECT_URL`          | Bypass pooler (PgBouncer) for migrations                                          |
+| Graceful shutdown         | `server.ts`           | Built-in SIGTERM/SIGINT handlers (10s timeout) and Redis connection cleanup       |
+| Logging                   | `prisma.ts`           | Verbose in dev, warn+error only in production                                     |
+| Distributed Rate Limiting | `.env` variables      | Configure `REDIS_URL` or `REDIS_HOST` to enable shared rate limiting limits       |
+| Trust Proxy               | `TRUST_PROXY` var     | Set to `1`, `true`, or proxy IP to identify real client IPs behind load balancers |
