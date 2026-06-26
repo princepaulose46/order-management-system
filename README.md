@@ -211,6 +211,21 @@ npm run build
 NODE_ENV=production npm start
 ```
 
+### Docker Containerization
+
+You can containerize the application using the multi-stage `Dockerfile`:
+
+```bash
+# 1. Build the Docker image
+docker build -t order-management-system:latest .
+
+# 2. Run the container with environment variables
+docker run -p 3000:3000 \
+  -e DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME" \
+  -e NODE_ENV="production" \
+  order-management-system:latest
+```
+
 ### Production Configuration
 
 | Setting                   | Where                 | Recommendation                                                                    |
