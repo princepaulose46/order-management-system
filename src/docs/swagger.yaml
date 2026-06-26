@@ -1,0 +1,202 @@
+openapi: 3.0.0
+
+components:
+  schemas:
+    OrderStatus:
+      type: string
+      enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+      description: The current status of an order.
+
+    OrderItemInput:
+      type: object
+      required:
+        - productName
+        - quantity
+        - price
+      properties:
+        productName:
+          type: string
+          example: "Wireless Headphones"
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        price:
+          type: string
+          format: decimal
+          description: "Decimal string for monetary precision (e.g., \"49.99\")"
+          example: "49.99"
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        orderId:
+          type: string
+          format: uuid
+        productName:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: string
+          format: decimal
+
+    CreateOrderRequest:
+      type: object
+      required:
+        - customerName
+        - items
+      properties:
+        customerName:
+          type: string
+          example: "John Doe"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemInput"
+          minItems: 1
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerName:
+          type: string
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        statusCode:
+          type: integer
+
+paths:
+  /api/orders:
+    post:
+      summary: Create a new order
+      description: Places a new order with the provided customer name and order items. The order starts in PENDING status.
+      tags: [Orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        201:
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    get:
+      summary: List all orders
+      description: Retrieves all orders, optionally filtered by status. Results are sorted by creation date (newest first).
+      tags: [Orders]
+      parameters:
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
+          required: false
+          description: Filter orders by status
+      responses:
+        200:
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+        400:
+          description: Invalid status filter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/orders/{id}:
+    get:
+      summary: Get order by ID
+      description: Retrieves the details of a specific order, including all its items.
+      tags: [Orders]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique order ID
+      responses:
+        200:
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/orders/{id}/cancel:
+    put:
+      summary: Cancel an order
+      description: Cancels an order. Only orders in PENDING status can be cancelled. Orders that have already been processed cannot be cancelled.
+      tags: [Orders]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique order ID
+      responses:
+        200:
+          description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        400:
+          description: Order cannot be cancelled (not in PENDING status)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
