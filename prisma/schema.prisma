@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Used for migrations; bypasses connection pooler (e.g., PgBouncer)
+}
+
+/// Enum representing all possible order statuses in the system.
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+/// Represents a customer order containing one or more items.
+model Order {
+  id           String      @id @default(uuid()) @db.Uuid
+  customerName String      @map("customer_name") @db.VarChar(255)
+  status       OrderStatus @default(PENDING)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  items OrderItem[]
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+  @@map("orders")
+}
+
+/// Represents a single line item within an order.
+model OrderItem {
+  id          String  @id @default(uuid()) @db.Uuid
+  orderId     String  @map("order_id") @db.Uuid
+  productName String  @map("product_name") @db.VarChar(255)
+  quantity    Int
+  price       Decimal @db.Decimal(12, 2) // Safe for monetary values — no floating-point rounding errors
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
