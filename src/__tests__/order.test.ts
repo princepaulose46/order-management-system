@@ -61,6 +61,23 @@ describe("Order API - Integration Tests", () => {
       createdOrderId = response.body.id;
     });
 
+    it("should return 400 when price is passed as a string", async () => {
+      const payload = {
+        customerName: "Prince Paulose",
+        items: [
+          { productName: "Phone", quantity: 1, price: "49000" },
+        ],
+      };
+
+      const response = await request(app)
+        .post("/api/orders")
+        .send(payload)
+        .expect(400);
+
+      expect(response.body).toHaveProperty("error");
+      expect(response.body.error).toContain("Price must be a non-negative number");
+    });
+
     it("should return 400 when customer name is missing", async () => {
       const payload = {
         customerName: "",

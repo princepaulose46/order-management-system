@@ -22,10 +22,10 @@ components:
           minimum: 1
           example: 2
         price:
-          type: string
-          format: decimal
-          description: "Decimal string for monetary precision (e.g., \"49.99\")"
-          example: "49.99"
+          type: number
+          minimum: 0
+          description: "Price of the item"
+          example: 49.99
 
     OrderItem:
       type: object
